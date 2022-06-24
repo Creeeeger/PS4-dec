@@ -220,3 +220,58 @@ int cfg_parse_stream(cfg_reader reader, void *stream, cfg_handler handler, void 
 }
 
 /* See documentation in header file. */
+int cfg_parse_file(FILE *file, cfg_handler handler, void *user) {
+  return cfg_parse_stream((cfg_reader)fgets, file, handler, user);
+}
+
+/* See documentation in header file. */
+int cfg_parse(const char *filename, cfg_handler handler, void *user) {
+  FILE *file;
+  int error;
+
+  file = fopen(filename, "r");
+  if (!file) {
+    return -1;
+  }
+  error = cfg_parse_file(file, handler, user);
+  fclose(file);
+  return error;
+}
+
+/* An cfg_reader function to read the next line from a string buffer. This
+   is the fgets() equivalent used by cfg_parse_string(). */
+static char *cfg_reader_string(char *str, int num, void *stream) {
+  cfg_parse_string_ctx *ctx = (cfg_parse_string_ctx *)stream;
+  const char *ctx_ptr = ctx->ptr;
+  size_t ctx_num_left = ctx->num_left;
+  char *strp = str;
+  char c;
+
+  if (ctx_num_left == 0 || num < 2) {
+    return NULL;
+  }
+
+  while (num > 1 && ctx_num_left != 0) {
+    c = *ctx_ptr++;
+    ctx_num_left--;
+    *strp++ = c;
+    if (c == '\n') {
+      break;
+    }
+    num--;
+  }
+
+  *strp = '\0';
+  ctx->ptr = ctx_ptr;
+  ctx->num_left = ctx_num_left;
+  return str;
+}
+
+/* See documentation in header file. */
+int cfg_parse_string(const char *string, cfg_handler handler, void *user) {
+  cfg_parse_string_ctx ctx;
+
+  ctx.ptr = string;
+  ctx.num_left = strlen(string);
+  return cfg_parse_stream((cfg_reader)cfg_reader_string, &ctx, handler, user);
+}
