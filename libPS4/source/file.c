@@ -158,3 +158,98 @@ int file_compare(char *fname1, char *fname2) {
   return res;
 }
 
+int rmtree(const char *path) {
+  DIR *d = opendir(path);
+  int r = -1;
+
+  if (d) {
+    struct dirent *p;
+
+    r = 0;
+    while (!r && (p = readdir(d))) {
+      int r2 = -1;
+      char *buf;
+      size_t len;
+
+      if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, "..")) {
+        continue;
+      }
+
+      len = strlen(path) + strlen(p->d_name) + 2;
+      buf = malloc(len);
+
+      if (buf) {
+        struct stat statbuf;
+
+        snprintf(buf, len, "%s/%s", path, p->d_name);
+        if (!stat(buf, &statbuf)) {
+          if (S_ISDIR(statbuf.st_mode)) {
+            r2 = rmtree(buf);
+          } else {
+            r2 = unlink(buf);
+          }
+        }
+        free(buf);
+      }
+      r = r2;
+    }
+    closedir(d);
+  }
+
+  if (!r) {
+    r = rmdir(path);
+  }
+
+  return r;
+}
+
+int fgetc_pointer(int fp) {
+  char c;
+  if (read(fp, &c, 1) == 0) {
+    return (-1);
+  }
+  return (c);
+}
+
+void build_iovec(struct iovec **iov, int *iovlen, const char *name, const void *val, size_t len) {
+  int i;
+  if (*iovlen < 0) {
+    return;
+  }
+  i = *iovlen;
+  *iov = realloc(*iov, sizeof **iov * (i + 2));
+  if (*iov == NULL) {
+    *iovlen = -1;
+    return;
+  }
+  (*iov)[i].iov_base = strdup(name);
+  (*iov)[i].iov_len = strlen(name) + 1;
+  ++i;
+  (*iov)[i].iov_base = (void *)val;
+  if (len == (size_t)-1) {
+    if (val != NULL) {
+      len = strlen(val) + 1;
+    } else {
+      len = 0;
+    }
+  }
+  (*iov)[i].iov_len = (int)len;
+  *iovlen = ++i;
+}
+
+int mount_large_fs(const char *device, const char *mountpoint, const char *fstype, const char *mode, unsigned int flags) {
+  struct iovec *iov = NULL;
+  int iovlen = 0;
+  build_iovec(&iov, &iovlen, "fstype", fstype, -1);
+  build_iovec(&iov, &iovlen, "fspath", mountpoint, -1);
+  build_iovec(&iov, &iovlen, "from", device, -1);
+  build_iovec(&iov, &iovlen, "large", "yes", -1);
+  build_iovec(&iov, &iovlen, "timezone", "static", -1);
+  build_iovec(&iov, &iovlen, "async", "", -1);
+  build_iovec(&iov, &iovlen, "ignoreacl", "", -1);
+  if (mode) {
+    build_iovec(&iov, &iovlen, "dirmask", mode, -1);
+    build_iovec(&iov, &iovlen, "mask", mode, -1);
+  }
+  return nmount(iov, iovlen, flags);
+}
