@@ -138,3 +138,36 @@ void decrypt_and_dump_self(char *selfFile, char *saveFile) {
   }
 }
 
+void decrypt_dir(char *sourcedir, char *destdir) {
+  DIR *dir;
+  struct dirent *dp;
+  struct stat info;
+  char src_path[1024], dst_path[1024];
+
+  dir = opendir(sourcedir);
+  if (!dir) {
+    return;
+  }
+
+  mkdir(destdir, 0777);
+
+  while ((dp = readdir(dir)) != NULL) {
+    if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..")) {
+      // Do Nothing
+    } else {
+      sprintf(src_path, "%s/%s", sourcedir, dp->d_name);
+      sprintf(dst_path, "%s/%s", destdir, dp->d_name);
+      if (!stat(src_path, &info)) {
+        if (S_ISDIR(info.st_mode)) {
+          decrypt_dir(src_path, dst_path);
+        } else if (S_ISREG(info.st_mode)) {
+          if (is_self(src_path)) {
+            decrypt_and_dump_self(src_path, dst_path);
+          }
+        }
+      }
+    }
+  }
+  closedir(dir);
+}
+
