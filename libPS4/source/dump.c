@@ -171,3 +171,90 @@ void decrypt_dir(char *sourcedir, char *destdir) {
   closedir(dir);
 }
 
+int wait_for_app(char *title_id) {
+  int res = 0;
+
+  DIR *dir;
+  struct dirent *dp;
+
+  dir = opendir("/mnt/sandbox/pfsmnt");
+  if (!dir) {
+    return 0;
+  }
+
+  while ((dp = readdir(dir)) != NULL) {
+    if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..") || !strncmp(dp->d_name, "AZIF00003", 9)) {
+      // Do Nothing
+    } else {
+      if (strstr(dp->d_name, "-app0") != NULL) {
+        sscanf(dp->d_name, "%[^-]", title_id);
+        res = 1;
+        break;
+      }
+    }
+  }
+  closedir(dir);
+
+  return res;
+}
+
+int wait_for_bdcopy(char *title_id) {
+  char path[256];
+  char *buf;
+  size_t filelen, progress;
+
+  sprintf(path, "/system_data/playgo/%s/bdcopy.pbm", title_id);
+  FILE *pbm = fopen(path, "rb");
+  if (!pbm) {   // This is what triggers a "dump" when a game is deleted while the dumper is already running
+    return 100; // Returning 100 will stop the wait_for_bdcopy loop
+  }
+
+  fseek(pbm, 0, SEEK_END);
+  filelen = ftell(pbm);
+  fseek(pbm, 0, SEEK_SET);
+
+  buf = malloc(filelen);
+  if (buf == NULL) {
+    fclose(pbm);
+    return 0; // Return 0 on when unable to allocate buffer, should this be 100? It will trigger the same issue above
+  }
+
+  fread(buf, sizeof(char), filelen, pbm);
+  fclose(pbm);
+
+  progress = 0;
+  for (size_t i = 0x100; i < filelen; i++) {
+    if (buf[i]) {
+      progress++;
+    }
+  }
+
+  free(buf);
+
+  return (progress * 100 / (filelen - 0x100));
+}
+
+int wait_for_usb(char *usb_name, char *usb_path) {
+  int row = 0;
+  char probefile[19];
+  int fd = -1;
+
+  while (fd == -1) {
+    sceKernelUsleep(100 * 1000);
+
+    if (row >= 80) { // 10 attempts at each USB #, reaching 8 resets to 0
+      row = 0;
+    } else {
+      row += 1;
+    }
+
+    snprintf_s(probefile, sizeof(probefile), "/mnt/usb%i/.probe", row / 10);
+    fd = open(probefile, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+  }
+  close(fd);
+  unlink(probefile);
+  sprintf(usb_name, "USB%i", row / 10);
+  sprintf(usb_path, "/mnt/usb%i", row / 10);
+
+  return 1;
+}
