@@ -187,3 +187,126 @@ static char *get_entry_name_by_type(uint32_t type) {
   return entry_name;
 }
 
+int unpkg(char *pkgfn, char *tidpath) {
+  struct cnt_pkg_main_header m_header;
+  struct cnt_pkg_content_header c_header;
+  memset(&m_header, 0, sizeof(struct cnt_pkg_main_header));
+  memset(&c_header, 0, sizeof(struct cnt_pkg_content_header));
+
+  int fdin = open(pkgfn, O_RDONLY, 0);
+  if (fdin == -1) {
+    return 1;
+  }
+
+  // Read in the main CNT header (size seems to be 0x180 with 4 hashes included).
+  lseek(fdin, 0, SEEK_SET);
+  read(fdin, &m_header, 0x180);
+
+  if (m_header.magic != PS4_PKG_MAGIC) {
+    return 2;
+  }
+
+  // Seek to offset 0x400 and read content associated header (size seems to be 0x80 with 2 hashes included).
+  lseek(fdin, 0x400, SEEK_SET);
+  read(fdin, &c_header, 0x80);
+
+  // Locate the entry table and list each type of section inside the PKG/CNT file.
+  lseek(fdin, bswap_32(m_header.file_table_offset), SEEK_SET);
+
+  struct cnt_pkg_table_entry *entries = malloc(sizeof(struct cnt_pkg_table_entry) * bswap_16(m_header.table_entries_num));
+  if (entries == NULL) {
+    close(fdin);
+    return 3;
+  }
+  memset(entries, 0, sizeof(struct cnt_pkg_table_entry) * bswap_16(m_header.table_entries_num));
+  int i;
+  for (i = 0; i < bswap_16(m_header.table_entries_num); i++) {
+    read(fdin, &entries[i], 0x20);
+  }
+
+  // Vars for file name listing.
+  struct file_entry *entry_files = malloc(sizeof(struct file_entry) * bswap_16(m_header.table_entries_num));
+  if (entry_files == NULL) {
+    close(fdin);
+    free(entries);
+    return 4;
+  }
+  memset(entry_files, 0, sizeof(struct file_entry) * bswap_16(m_header.table_entries_num));
+  char *file_name_list[256];
+  int file_name_index = 0;
+  int file_count = 0;
+
+  // Search through the data entries and locate the name table entry.
+  // This section should keep relevant strings for internal files inside the PKG/CNT file.
+  for (i = 0; i < bswap_16(m_header.table_entries_num); i++) {
+    if (bswap_32(entries[i].type) == PS4_PKG_ENTRY_TYPE_NAME_TABLE) {
+      lseek(fdin, bswap_32(entries[i].offset) + 1, SEEK_SET);
+      while ((file_name_list[file_name_index] = read_string(fdin))[0] != '\0') {
+        file_name_index++;
+      }
+    }
+  }
+
+  // Search through the data entries and locate file entries.
+  // These entries need to be mapped with the names collected from the name table.
+  for (i = 0; i < bswap_16(m_header.table_entries_num); i++) {
+    // Use a predefined list for most file names.
+    entry_files[i].name = get_entry_name_by_type(bswap_32(entries[i].type));
+    entry_files[i].offset = bswap_32(entries[i].offset);
+    entry_files[i].size = bswap_32(entries[i].size);
+
+    if (((bswap_32(entries[i].type) & PS4_PKG_ENTRY_TYPE_FILE1) == PS4_PKG_ENTRY_TYPE_FILE1) || (((bswap_32(entries[i].type) & PS4_PKG_ENTRY_TYPE_FILE2) == PS4_PKG_ENTRY_TYPE_FILE2))) {
+      // If a file was found and it's name is not on the predefined list, try to map it with
+      // a name from the name table.
+      if (entry_files[i].name == NULL) {
+        entry_files[i].name = file_name_list[file_count];
+      }
+      if (entry_files[i].name != NULL) {
+        file_count++;
+      }
+    }
+  }
+
+  // Set up the output directory for file writing.
+  char dest_path[256];
+  char title_id[256];
+
+  memset(title_id, 0, 256);
+  memcpy(title_id, tidpath, 255);
+  mkdir(title_id, 0777);
+
+  // Search through the entries for mapped file data and output it.
+  for (i = 0; i < bswap_16(m_header.table_entries_num); i++) {
+    // Var for file writing.
+    unsigned char *entry_file_data = (unsigned char *)realloc(NULL, entry_files[i].size);
+
+    lseek(fdin, entry_files[i].offset, SEEK_SET);
+    read(fdin, entry_file_data, entry_files[i].size);
+
+    if (entry_files[i].name == NULL)
+      continue;
+
+    sprintf(dest_path, "%s/sce_sys/%s", title_id, entry_files[i].name);
+
+    _mkdir(dest_path);
+
+    int fdout = open(dest_path, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+    if (fdout != -1) {
+      write(fdout, entry_file_data, entry_files[i].size);
+      close(fdout);
+    } else {
+      close(fdin);
+      free(entries);
+      free(entry_files);
+      return 5;
+    }
+  }
+
+  // Clean up.
+  close(fdin);
+
+  free(entries);
+  free(entry_files);
+
+  return 0;
+}
