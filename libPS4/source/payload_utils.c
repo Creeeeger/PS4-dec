@@ -337,3 +337,167 @@ int kpayload_npdrm_patch(struct thread *td, struct kpayload_firmware_args *args)
   return 0;
 }
 
+uint16_t get_firmware() {
+  // Return early if this has already been run
+  if (g_firmware) {
+    return g_firmware;
+  }
+
+  char sandbox_path[33]; // `/XXXXXXXXXX/common/lib/libc.sprx` [Char count of 32 + nullterm]
+  snprintf_s(sandbox_path, sizeof(sandbox_path), "/%s/common/lib/libc.sprx", sceKernelGetFsSandboxRandomWord());
+  int fd = open(sandbox_path, O_RDONLY, 0);
+  if (fd < 0) {
+    // Assume it's currently jailbroken
+    fd = open("/system/common/lib/libc.sprx", O_RDONLY, 0);
+    if (fd < 0) {
+      // It's really broken
+      return -1;
+    }
+  }
+
+  // Read SELF header from file
+  lseek(fd, 0, SEEK_SET);
+  SelfHeader self_header;
+  if (read(fd, &self_header, sizeof(self_header)) != sizeof(self_header)) {
+    return -1;
+  }
+
+  // Calculate ELF header offset from the number of SELF segments
+  uint64_t elf_header_offset = sizeof(self_header) + self_header.num_of_segments * sizeof(SelfEntry);
+
+  // Read ELF header from file
+  lseek(fd, elf_header_offset, SEEK_SET);
+  Elf64_Ehdr elf_header;
+  if (read(fd, &elf_header, sizeof(elf_header)) != sizeof(elf_header)) {
+    return -1;
+  }
+
+  // Calculate SCE header offset from number of ELF entries
+  uint64_t sce_header_offset = elf_header_offset + elf_header.e_ehsize + elf_header.e_phnum * elf_header.e_phentsize;
+
+  // Align
+  while (sce_header_offset % 0x10 != 0) {
+    sce_header_offset++;
+  }
+
+  // Read SCE header
+  lseek(fd, sce_header_offset, SEEK_SET);
+  SceHeader sce_header;
+  if (read(fd, &sce_header, sizeof(sce_header)) != sizeof(sce_header)) {
+    return -1;
+  }
+
+  close(fd);
+
+  // Format and return
+  char string_fw[5] = {0}; // "0000\0"
+  snprintf_s(string_fw, sizeof(string_fw), "%02lx%02lx", (sce_header.fw_version >> (5 * 8)) & 0xFF, (sce_header.fw_version >> (4 * 8)) & 0xFF);
+
+  uint16_t ret = atoi(string_fw); // Numerical representation of the firmware version. ex: 505 for 5.05, 702 for 7.02, etc
+
+  g_firmware = ret;
+  return ret;
+}
+
+int get_firmware_string(char *fw_string) {
+  uint16_t fw_version = get_firmware();
+
+  sprintf(fw_string, "%i", fw_version);
+
+  if (fw_version < 10) {
+    sprintf(fw_string, "0.0%c", fw_string[0]);
+  } else if (fw_version < 100) {
+    sprintf(fw_string, "0.%c%c", fw_string[0], fw_string[1]);
+  } else if (fw_version < 1000) {
+    sprintf(fw_string, "%c.%c%c", fw_string[0], fw_string[1], fw_string[2]);
+  } else if (fw_version < 10000) {
+    sprintf(fw_string, "%c%c.%c%c", fw_string[0], fw_string[1], fw_string[2], fw_string[3]);
+  } else {
+    return -1;
+  }
+
+  return 0;
+}
+
+uint64_t get_kernel_base() {
+  uint64_t kernel_base;
+  uint64_t *kernel_base_ptr = mmap(NULL, 8, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0); // Allocate a buffer in userland
+  struct kpayload_kbase_info kpayload_kbase_info;
+  kpayload_kbase_info.fw_version = get_firmware();
+  kpayload_kbase_info.uaddr = (uint64_t)kernel_base_ptr;
+  if (kexec(&kpayload_kbase, &kpayload_kbase_info) < 0) {
+    kernel_base = -1;
+  } else {
+    memcpy(&kernel_base, kernel_base_ptr, 8);
+  }
+  munmap(kernel_base_ptr, 8);
+  return kernel_base;
+}
+
+int get_memory_dump(uint64_t kaddr, uint64_t *uaddr, size_t size) {
+  struct kpayload_dump_info kpayload_dump_info;
+  kpayload_dump_info.fw_version = get_firmware();
+  kpayload_dump_info.kaddr = kaddr;
+  kpayload_dump_info.uaddr = (uint64_t)uaddr;
+  kpayload_dump_info.size = size;
+  return kexec(&kpayload_dump, &kpayload_dump_info);
+}
+
+int jailbreak() {
+  if (is_jailbroken()) {
+    return 0;
+  }
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_jailbreak, &kpayload_firmware_info);
+}
+
+int mmap_patch() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_mmap, &kpayload_firmware_info);
+}
+
+int disable_aslr() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_aslr, &kpayload_firmware_info);
+}
+
+int kernel_clock(uint64_t set_time) {
+  struct kpayload_kclock_info kpayload_kclock_info;
+  kpayload_kclock_info.fw_version = get_firmware();
+  kpayload_kclock_info.set_time = set_time;
+  return kexec(&kpayload_kernel_clock, &kpayload_kclock_info);
+}
+
+int enable_browser() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_enable_browser, &kpayload_firmware_info);
+}
+
+int spoof_target_id(uint8_t id) {
+  struct kpayload_target_id_info kpayload_target_id_info;
+  kpayload_target_id_info.fw_version = get_firmware();
+  kpayload_target_id_info.spoof = id;
+  return kexec(&kpayload_target_id, &kpayload_target_id_info);
+}
+
+int enable_perm_uart() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_perm_uart, &kpayload_firmware_info);
+}
+
+int exit_idu() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_exit_idu, &kpayload_firmware_info);
+}
+
+int npdrm_patch() {
+  struct kpayload_firmware_info kpayload_firmware_info;
+  kpayload_firmware_info.fw_version = get_firmware();
+  return kexec(&kpayload_npdrm_patch, &kpayload_firmware_info);
+}
