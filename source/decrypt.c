@@ -311,3 +311,163 @@ end:
   return result;
 }
 
+int find_table_segment(int index, pup_segment* segments, int segment_count,
+                       int* table_index)
+{
+  if (((index | 0x100) & 0xF00) == 0xF00)
+  {
+    printfsocket("Can't do table for segment #%d\n", index);
+    *table_index = -1;
+    return -1;
+  }
+
+  for (int i = 0; i < segment_count; i++)
+  {
+    if (segments[i].flags & 1)
+    {
+      uint32_t id = segments[i].flags >> 20;
+      if (id == index)
+      {
+        *table_index = i;
+        return 0;
+      }
+    }
+  }
+
+  return -2;
+}
+
+int decrypt_pup_data(const decrypt_state * state)
+{
+  int result;
+  ssize_t bytesread;
+  uint8_t* header_data = NULL;
+
+  pup_file_header file_header;
+  bytesread = readbytes(state, DIO_BASEOFFSET, sizeof(file_header), &file_header, sizeof(file_header));
+  if (bytesread != sizeof(file_header))
+  {
+    printfsocket("Failed to read PUP entry header!\n");
+    goto end;
+  }
+
+
+  if (file_header.magic != 0x1D3D154F) {
+    printfsocket("PUP header magic is invalid!\n");
+    goto end;
+  }
+
+  int header_size = file_header.unknown_0C + file_header.unknown_0E;
+
+  header_data = memalign(0x4000, header_size);
+  memcpy(header_data, &file_header, sizeof(file_header));
+
+  size_t tsize = header_size - sizeof(file_header);
+  bytesread = readbytes(state, DIO_NOSEEK, tsize, &header_data[sizeof(file_header)], header_size);
+  if (bytesread != tsize)
+  {
+    printfsocket("Failed to read PUP entry header!\n");
+    goto end;
+  }
+
+  if ((file_header.flags & 1) == 0)
+  {
+    printfsocket("Decrypting header...\n");
+    result = encsrv_decrypt_header(state->device_fd, header_data,
+				   header_size, state->pup_type);
+    if (result != 0)
+    {
+      int errcode = errno;
+      printfsocket("Failed to decrypt header! Error: %d (%s)\n", errcode, strerror(errcode));
+      goto end;
+    }
+  }
+  else
+  {
+    printfsocket("Can't decrypt network pup!\n");
+    goto end;
+  }
+
+  pup_header* header = (pup_header*)&header_data[0];
+  pup_segment* segments = (pup_segment*)&header_data[0x20];
+
+  ssize_t byteswritten = writebytes(state, DIO_BASEOFFSET, header_size, header_data, header_size);
+  if (byteswritten != header_size) {
+     printfsocket("Failed to write PUP entry header!\n");
+     goto end;
+  }
+
+  printfsocket("Verifying segments...\n");
+  result = verify_segments(state, segments, header->segment_count);
+  if (result < 0)
+  {
+    printfsocket("Failed to verify segments!\n");
+    goto end;
+  }
+
+
+  /*for (int i = 0; i < header->segment_count; i++)
+  {
+    pup_segment* segment = &segments[i];
+    printfsocket("%4d i=%4u b=%u c=%u t=%u r=%05X\n",
+                  i, segment->flags >> 20,
+                  (segment->flags & 0x800) != 0,
+                  (segment->flags & 0x8) != 0,
+                  (segment->flags & 0x1) != 0,
+                   segment->flags & 0xFF7F6);
+  }*/
+
+
+  printfsocket("Decrypting %d segments...\n", header->segment_count);
+  for (int i = 0; i < header->segment_count; i++)
+  {
+    pup_segment* segment = &segments[i];
+
+    uint32_t special = segment->flags & 0xF0000000;
+    if (special == 0xE0000000)
+    {
+      printfsocket("Skipping additional signature segment #%d!\n", i);
+      continue;
+    }
+    else if (special == 0xF0000000)
+    {
+      printfsocket("Skipping watermark segment #%d!\n", i);
+      continue;
+    }
+
+    printfsocket("Decrypting segment %d/%d...\n",
+                 1 + i, header->segment_count);
+
+    if ((segment->flags & 0x800) != 0)
+    {
+      int table_index;
+      result = find_table_segment(i, segments, header->segment_count, &table_index);
+      if (result < 0)
+      {
+        printfsocket("Failed to find table for segment #%d!\n", i);
+        continue;
+      }
+
+      result = decrypt_segment_blocks(state, i, segment, table_index, &segments[table_index]);
+    }
+    else
+    {
+      result = decrypt_segment(state, i, segment);
+    }
+
+    if (result < 0) {
+       goto end;
+    }
+
+
+  }
+
+end:
+  if (header_data != NULL)
+  {
+    free(header_data);
+  }
+
+  return 0;
+}
+
