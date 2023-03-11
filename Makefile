@@ -19,7 +19,7 @@ TARGET = $(shell basename $(CURDIR)).bin
 
 $(TARGET): $(ODIR) $(OBJS)
 	$(CC) $(LIBPS4)/crt0.s $(ODIR)/*.o -o temp.t $(CFLAGS) $(LFLAGS) $(LIBS)
-	$(OBJCOPY) -O binary temp.t $(TARGET)
+	$(OBJCOPY) -O elf64-x86-64 temp.t $(TARGET)
 	rm -f temp.t
 
 $(ODIR)/%.o: $(SDIR)/%.c
