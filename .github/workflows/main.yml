@@ -1,0 +1,42 @@
+---
+name: "Build"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: "Checkout"
+        uses: actions/checkout@v2
+      -
+        name: "Setup Environment"
+        run: |
+          git clone https://github.com/Creeeeger/PS4-dec.git
+          cd ps4_decryptor
+          chmod +rwx Makefile
+      -
+        name: "Build Lib"
+        run: |
+          sudo chmod +rwx install.sh
+          sudo bash install.sh          
+      -
+        name: "Build Unpacker"
+        run: |
+          export PS4SDK=/opt/ps4sdk
+          make
+          sudo chmod +777 ps4_decryptor.bin
+      -
+        name: "Upload Binary Artifact"
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./*.bin
+          if-no-files-found: error
