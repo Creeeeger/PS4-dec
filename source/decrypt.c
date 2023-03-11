@@ -7,6 +7,29 @@
 #include "debug.h"
 #include "kernel_utils.h"
 
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
+
+#ifdef DEBUG_SOCKET
+  #define printfsocket(format, ...)\
+    do {\
+      char __printfsocket_buffer[512];\
+      int __printfsocket_size = sprintf(__printfsocket_buffer, format, ##__VA_ARGS__);\
+      sceNetSend(sock, __printfsocket_buffer, __printfsocket_size, 0);\
+    } while(0)
+#endif
+
+void notify(char* message);
+uint8_t GetElapsed(uint64_t ResetInterval);
+
+extern int sock;
+extern time_t prevtime;
+
+#define SSIZET_FMT "%zd"
+
+#endif
+
+  
 int verify_segment(const decrypt_state* state, int index, pup_segment* segment, int additional)
 {
   int result;
@@ -16,7 +39,6 @@ int verify_segment(const decrypt_state* state, int index, pup_segment* segment, 
   ssize_t bytesread = readbytes(state, segment->offset, segment->compressed_size, buffer, segment->compressed_size);
   if (bytesread != segment->compressed_size)
   {
-     printfsocket("Failed to read segment #%d for verification!\n", index);
      result = -1;
      goto end;
   }
@@ -24,7 +46,6 @@ int verify_segment(const decrypt_state* state, int index, pup_segment* segment, 
   result = encsrv_verify_segment(state->device_fd, index, buffer, segment->compressed_size, additional);
   if (result != 0)
   {
-    printfsocket("Failed to verify segment #%d! %d\n", index, errno);
     goto end;
   }
 
@@ -46,7 +67,6 @@ int verify_segments(const decrypt_state* state, pup_segment* segments, int segme
     pup_segment* segment = &segments[i];
     if ((segment->flags & 0xF0000000) == 0xE0000000)
     {
-      printfsocket("Verifying segment #%d (%d)... [1]\n", i, segment->flags >> 20);
       result = verify_segment(state, i, segment, 1);
       if (result < 0)
       {
@@ -60,7 +80,6 @@ int verify_segments(const decrypt_state* state, pup_segment* segments, int segme
     pup_segment* segment = &segments[i];
     if ((segment->flags & 0xF0000000) == 0xF0000000)
     {
-      printfsocket("Verifying segment #%d (%d)... [0]\n", i, segment->flags >> 20);
       result = verify_segment(state, i, segment, 0);
       if (result < 0)
       {
@@ -100,7 +119,6 @@ int decrypt_segment(const decrypt_state* state, uint16_t index, pup_segment* seg
     ssize_t bytesread = readbytes(state, segment->offset, encrypted_size, buffer, segment->compressed_size);
     if (bytesread != encrypted_size)
     {
-      printfsocket("Failed to read segment #%d!\n", index);
       result = -1;
       goto end;
     }
