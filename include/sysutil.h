@@ -27,8 +27,6 @@ int32_t getInitialUser();
 void reboot();
 void shutdown();
 
-// HUGE shoutout to OSM-Made for removing the need to use the football/soccer icon in the notifications
-// https://github.com/OSM-Made/PS4-Notify
 #define printf_notification(...)                                                                         \
   do {                                                                                                   \
     SceNotificationRequest noti_buffer;                                                                  \
