@@ -33,7 +33,7 @@ jobs:
         run: |
           export PS4SDK=/opt/ps4sdk
           make
-          sudo chmod +777 ps4_decryptor.bin
+          sudo chmod +777 PS4-dec.bin
       -
         name: "Upload Binary Artifact"
         uses: actions/upload-artifact@v2
