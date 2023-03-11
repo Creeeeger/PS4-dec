@@ -4,12 +4,6 @@
 #include "fw_defines.h"
 #include "ps4.h"
 
-#define printf_notification(...)                       \
-  do {                                                 \
-    char message[256];                                 \
-    snprintf(message, sizeof(message), ##__VA_ARGS__); \
-    systemMessage(message);                            \
-  } while (0)
 
 struct kpayload_get_fw_version_info {
   uint64_t uaddr;
