@@ -29,6 +29,7 @@ extern time_t prevtime;
 ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void * buffer, size_t buffersize) {
 
   if (bytes > buffersize) {
+     printfsocket("ReadBytes failed! - Error: Buffer is too small!\n");
      return -1;
   }
 
@@ -50,6 +51,7 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
 
       if (result == -1) {
           int errcode = errno;
+          printfsocket("ReadBytes seek_set failed! - Error: %d (%s)\n", errcode, strerror(errcode));
           return -1;
       }
 

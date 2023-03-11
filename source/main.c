@@ -48,7 +48,7 @@ int _main(struct thread* td) {
   initSysUtil();
 
   GetElapsed(0);
-
+  printf_notification("Running PS4 PUP Decrypter");
   decrypt_pups("/mnt/usb0/safe.PS4UPDATE.PUP", "/mnt/usb0/%s.dec");
   printf_notification("Finished PS4 PUP Decrypter");
 
