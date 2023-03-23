@@ -471,3 +471,160 @@ end:
   return 0;
 }
 
+void decrypt_pup(decrypt_state * state, const char * OutputPath)
+{
+
+  if (OutputPath != NULL) {
+      sprintf(state->output_path, OutputPath, state->entryname);
+  }
+  else
+  {
+      sprintf(state->output_path, OUTPUTPATH, state->entryname);
+  }
+
+  printfsocket("Creating %s...\n", state->output_path);
+
+  state->output_file = open(state->output_path, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+  if (state->output_file == -1)
+  {
+    printfsocket("Failed to open %s!\n", state->output_path);
+    goto end;
+  }
+
+
+  const char * name = state->entryname;
+
+  if (strcmp(name, "PS4UPDATE1.PUP") == 0 || strcmp(name, "PS4UPDATE2.PUP") == 0)
+    state->pup_type = 1;
+
+  if (strcmp(name, "PS4UPDATE3.PUP") == 0 || strcmp(name, "PS4UPDATE4.PUP") == 0)
+    state->pup_type = 0;
+
+  if (state->pup_type < 0)
+  {
+    printfsocket("Don't know the type for %s!\n", state->output_path);
+    goto end;
+  }
+
+  decrypt_pup_data(state);
+
+end:
+  if (state->output_file != -1)
+  {
+    close(state->output_file);
+  }
+
+}
+
+
+void decrypt_pups(const char * InputPath, const char * OutputPath)
+{
+
+  decrypt_state state = { 0 };
+  state.device_fd = -1;
+
+  char * strings = (char*)malloc(2048);
+  state.input_path = strings; //512
+  state.output_path = strings+512; //512
+  state.entryname = strings+1024; //512
+  state.notifystr = strings+1536; //512
+
+  uint8_t * header_data = NULL;
+  size_t blsinitial = 0x400;
+
+  sprintf(state.input_path, "%s", (InputPath != NULL) ? InputPath : INPUTPATH);
+
+  printfsocket("Opening %s...\n", state.input_path);
+  state.input_file = open(state.input_path, O_RDONLY, 0);
+  if (state.input_file == -1)
+  {
+    printfsocket("Failed to open %s!\n", state.input_path);
+    goto end;
+  }
+
+  header_data = memalign(0x4000, blsinitial);
+
+  if (header_data == NULL) {
+    printfsocket("Failed to allocate memory!\n");
+  }
+
+  ssize_t bytesread = readbytes(&state, DIO_RESET, blsinitial, header_data, blsinitial);
+
+  if (bytesread < blsinitial) {
+    printfsocket("Failed to read BLS header or BLS header too small!!\n");
+    goto end;
+  }
+
+  bls_header * header = (bls_header*)header_data;
+
+  if (header->magic != 0x32424C53) {
+    printfsocket("Invalid BLS Header!\n");
+    goto end;
+  }
+
+  if ((header->file_count < 1) || (header->file_count > 10)) {
+     printfsocket("Invalid PUP entry count!\n");
+     goto end;
+  }
+
+  state.totalentries = header->file_count;
+
+  for (uint32_t i = 0; i < header->file_count; i++)
+  {
+    state.device_fd = open("/dev/pup_update0", O_RDWR, 0);
+    if (state.device_fd < 0)
+    {
+      printfsocket("Failed to open /dev/pup_update0!\n");
+      goto end;
+    }
+
+    printfsocket("Verifying Bls Header...\n");
+    int result = encsrv_verify_blsheader(state.device_fd, header_data, blsinitial, 0);
+
+    if (result != 0) {
+        int errcode = errno;
+        printfsocket("Failed while verifying Bls Header! Error: %d (%s)\n", errcode, strerror(errcode));
+        goto end;
+    }
+
+    sprintf(state.entryname, "%s", header->entry_list[i].name);
+
+    state.pup_type = -1;
+    state.entryid = i + 1;
+
+    state.input_base_offset = header->entry_list[i].block_offset * 512;
+
+    state.output_file = -1;
+    state.output_base_offset = 0;
+
+    sprintf(state.notifystr, "Decrypting \"%s\" (%d/%d) from %s...", state.entryname, state.entryid, state.totalentries, state.input_path);
+    printf_notification(state.notifystr);
+
+    decrypt_pup(&state, OutputPath);
+
+    close(state.device_fd);
+    state.device_fd = -1;
+
+  }
+
+end:
+  if (header_data != NULL)
+  {
+    free(header_data);
+  }
+
+  if (strings != NULL) {
+    free(strings);
+  }
+
+  if (state.input_file != -1)
+  {
+    close(state.input_file);
+  }
+
+  if (state.device_fd != -1)
+  {
+    close(state.device_fd);
+  }
+
+}
