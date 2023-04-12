@@ -109,3 +109,169 @@ int kpayload_get_fw_version(struct thread *td, struct kpayload_get_fw_version_ar
   return 0;
 }
 
+int kpayload_jailbreak(struct thread *td, struct kpayload_jailbreak_args *args) {
+  struct filedesc *fd;
+  struct ucred *cred;
+  fd = td->td_proc->p_fd;
+  cred = td->td_proc->p_ucred;
+
+  void *kernel_base;
+  uint8_t *kernel_ptr;
+  void **got_prison0;
+  void **got_rootvnode;
+
+  uint64_t fw_version = args->kpayload_jailbreak_info->fw_version;
+
+
+  if (fw_version == 0x350) {
+    // 3.50
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K350_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K350_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K350_ROOTVNODE];
+  } else if (fw_version == 0x355) {
+    // 3.55
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K355_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K355_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K355_ROOTVNODE];
+  } else if (fw_version == 0x370) {
+    // 3.70
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K370_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K370_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K370_ROOTVNODE];
+  } else if (fw_version == 0x400) {
+    // 4.00 and 4.01
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K400_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K400_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K400_ROOTVNODE];
+  } else if (fw_version == 0x405) {
+    // 4.05
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K405_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K405_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K405_ROOTVNODE];
+  } else if (fw_version == 0x406) {
+    // 4.06
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K406_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K406_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K406_ROOTVNODE];
+  } else if (fw_version == 0x407) {
+    // 4.07
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K407_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K407_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K407_ROOTVNODE];
+  } else if (fw_version == 0x450) {
+    // 4.50 and 4.55
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K450_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K450_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K450_ROOTVNODE];
+  } else if (fw_version == 0x470) {
+    // 4.70
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K470_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K470_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K470_ROOTVNODE];
+  } else if (fw_version == 0x471) {
+    // 4.71, 4.72, 4.73, and 4.74
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K471_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K471_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K471_ROOTVNODE];
+  } else if (fw_version == 0x500) {
+    // 5.00 and 5.01
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K501_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K500_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K500_ROOTVNODE];
+  } else if (fw_version == 0x503) {
+    // 5.03
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K503_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K503_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K503_ROOTVNODE];
+  } else if (fw_version == 0x505) {
+    // 5.05 and 5.07
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K505_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K505_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K505_ROOTVNODE];
+  } else if (fw_version == 0x550) {
+    // 5.50
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K550_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K550_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K550_ROOTVNODE];
+  } else if (fw_version == 0x553) {
+    // 5.53
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K553_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K553_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K553_ROOTVNODE];
+  } else if (fw_version == 0x555) {
+    // 5.55 and 5.56
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K555_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K555_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K555_ROOTVNODE];
+  } else if (fw_version == 0x600) {
+    // 6.00 and 6.02
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K600_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K600_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K600_ROOTVNODE];
+  } else if (fw_version == 0x620) {
+    // 6.20
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K620_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K620_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K620_ROOTVNODE];
+  } else if (fw_version == 0x650) {
+    // 6.50 and 6.51
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K650_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K650_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K650_ROOTVNODE];
+  } else if (fw_version == 0x670) {
+    // 6.70, 6.71, and 6.72
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K670_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K670_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K670_ROOTVNODE];
+  } else if (fw_version == 0x700) {
+    // 7.00, 7.01, 7.02
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K700_XFAST_SYSCALL];
+    kernel_ptr = (uint8_t *)kernel_base;
+    got_prison0 = (void **)&kernel_ptr[K700_PRISON_0];
+    got_rootvnode = (void **)&kernel_ptr[K700_ROOTVNODE];
+  } else {
+    return -1;
+  }
+
+  cred->cr_uid = 0;
+  cred->cr_ruid = 0;
+  cred->cr_rgid = 0;
+  cred->cr_groups[0] = 0;
+
+  cred->cr_prison = *got_prison0;
+  fd->fd_rdir = fd->fd_jdir = *got_rootvnode;
+
+  void *td_ucred = *(void **)(((char *)td) + 304);
+
+  uint64_t *sonyCred = (uint64_t *)(((char *)td_ucred) + 96);
+  *sonyCred = 0xffffffffffffffff;
+
+  uint64_t *sceProcessAuthorityId = (uint64_t *)(((char *)td_ucred) + 88);
+  *sceProcessAuthorityId = 0x3801000000000013;
+
+  uint64_t *sceProcCap = (uint64_t *)(((char *)td_ucred) + 104);
+  *sceProcCap = 0xffffffffffffffff;
+
+  return 0;
+}
+
