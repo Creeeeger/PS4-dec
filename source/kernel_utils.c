@@ -440,3 +440,46 @@ int kpayload_kernel_dumper(struct thread *td, struct kpayload_kernel_dumper_args
   return cpRet;
 }
 
+uint64_t get_fw_version(void) {
+  uint64_t fw_version = 0x666;
+  uint64_t *fw_version_ptr = mmap(NULL, 8, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+  struct kpayload_get_fw_version_info kpayload_get_fw_version_info;
+  kpayload_get_fw_version_info.uaddr = (uint64_t)fw_version_ptr;
+  kexec(&kpayload_get_fw_version, &kpayload_get_fw_version_info);
+  memcpy(&fw_version, fw_version_ptr, 8);
+  munmap(fw_version_ptr, 8);
+
+  return fw_version;
+}
+
+int jailbreak(uint64_t fw_version) {
+  struct kpayload_jailbreak_info kpayload_jailbreak_info;
+  kpayload_jailbreak_info.fw_version = fw_version;
+  kexec(&kpayload_jailbreak, &kpayload_jailbreak_info);
+
+  return 0;
+}
+
+uint64_t get_kernel_base(uint64_t fw_version) {
+  uint64_t kernel_base = -1;
+  uint64_t *kernel_base_ptr = mmap(NULL, 8, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+  struct kpayload_get_kbase_info kpayload_get_kbase_info;
+  kpayload_get_kbase_info.fw_version = fw_version;
+  kpayload_get_kbase_info.uaddr = (uint64_t)kernel_base_ptr;
+  kexec(&kpayload_get_kbase, &kpayload_get_kbase_info);
+  memcpy(&kernel_base, kernel_base_ptr, 8);
+  munmap(kernel_base_ptr, 8);
+
+  return kernel_base;
+}
+
+int dump_kernel(uint64_t fw_version, uint64_t kaddr, uint64_t *dump, size_t size) {
+  struct kpayload_kernel_dumper_info kpayload_kernel_dumper_info;
+  kpayload_kernel_dumper_info.fw_version = fw_version;
+  kpayload_kernel_dumper_info.kaddr = kaddr;
+  kpayload_kernel_dumper_info.uaddr = (uint64_t)dump;
+  kpayload_kernel_dumper_info.size = size;
+  kexec(&kpayload_kernel_dumper, &kpayload_kernel_dumper_info);
+
+  return 0;
+}
