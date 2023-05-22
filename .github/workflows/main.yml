@@ -31,12 +31,15 @@ jobs:
       -
         name: "Build Unpacker"
         run: |
-          export PS4SDK=/opt/ps4sdk
+          export PS4SDK=$(pwd)/ps4sdk
           make
-          sudo chmod +777 PS4-dec.bin
+          sudo chmod +777 PS4_ubu.bin
+          sudo chmod +777 PS4_mac.bin
+          sudo chmod +777 PS4.exe
       -
         name: "Upload Binary Artifact"
         uses: actions/upload-artifact@v2
         with:
           path: ./*.bin
+          path: ./*.exe
           if-no-files-found: error
