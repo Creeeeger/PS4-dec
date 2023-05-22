@@ -1,4 +1,5 @@
 #include "kernel_utils.h"
+#include "decrypt.c"
 
 #define KERNEL_CHUNK_SIZE 0x1000
 #define KERNEL_CHUNK_NUMBER 0x69B8
@@ -47,6 +48,7 @@ int _main(struct thread* td) {
 
   initSysUtil();
 
+    
   GetElapsed(0);
   printf_notification("Running PS4 PUP Decrypter");
   decrypt_pups("/mnt/usb0/safe.PS4UPDATE.PUP", "/mnt/usb0/%s.dec");

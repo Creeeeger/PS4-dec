@@ -290,7 +290,7 @@ int kpayload_get_kbase(struct thread *td, struct kpayload_get_kbase_args *args) 
   } else if (fw_version == 0x370) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K370_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K370_COPYOUT);
-  } else if (fw_version == 0x400 || 0x401) {
+  } else if (fw_version == 0x400) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K400_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K400_COPYOUT);
   } else if (fw_version == 0x405) {
@@ -369,7 +369,7 @@ int kpayload_kernel_dumper(struct thread *td, struct kpayload_kernel_dumper_args
   } else if (fw_version == 0x370) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K370_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K370_COPYOUT);
-  } else if (fw_version == 0x400 || 0x401) {
+  } else if (fw_version == 0x400) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K400_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K400_COPYOUT);
   } else if (fw_version == 0x405) {
