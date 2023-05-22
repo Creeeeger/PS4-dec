@@ -1,24 +1,16 @@
 # PS4 PUP Update File Decryptor
-
-- Based on toolchain and Decryptor from Scene collective
+The PS4 PUP Update File Decryptor is a tool designed to decrypt PS4 PUP (PlayStation Update Package) files. It is based on the toolchain and Decryptor from the Scene collective. The purpose of this tool is to decrypt encrypted PS4 firmware update files for analysis and research purposes.
 
 # Roadmap
+The roadmap for the PS4 PUP Update File Decryptor includes the following tasks:
 
-- fix segemntation fault error
-- Enable Multiplatform Build
-- Compiled output for Windows
-- Fix Compile errors
+- Fix segmentation fault error: Address any issues causing segmentation faults and ensure the tool runs without errors.
+- Compiled output for Windows: Provide a compiled version of the tool for Windows users, allowing them to decrypt PS4 PUP files on their systems.
+- Fix Compile errors: Address any compile errors encountered during the build process to ensure the tool can be successfully compiled.
 
-# Github Workflow
+# GitHub Workflow
+To contribute to the development of the PS4 PUP Update File Decryptor, follow these steps:
 
-- Create a fork 
-- enable actions
-- build
-
-# Local (Development)
-
-- Run local.sh
-    - Ubuntu (22.04) ``` sudo local.sh ```
-    - macOS 13 (Ventura) ``` sudo bash local.sh ```
-    (run before ``` brew update && brew install binutils gcc make```)
-    - Windows --- No support
+- Create a fork: Fork the repository to your own GitHub account.
+- Enable actions: Enable GitHub Actions in your forked repository to utilize the automated build process.
+- Build: Trigger the build process using the GitHub Actions workflow. This will compile the tool and generate the necessary output files.

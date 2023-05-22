@@ -14,32 +14,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: "Checkout"
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: "Setup Environment"
+
+      - name: Setup Environment
         run: |
           git clone https://github.com/Creeeeger/PS4-dec.git
           cd PS4-dec
+          make clean
           chmod +rwx Makefile
-      -
-        name: "Build Lib"
+
+      - name: Build Lib
         run: |
           sudo chmod +rwx install.sh
-          sudo bash install.sh          
-      -
-        name: "Build Unpacker"
+          sudo bash install.sh
+
+      - name: Build Unpacker
         run: |
           export PS4SDK=$(pwd)/ps4sdk
           make
           sudo chmod +777 PS4_ubu.bin
           sudo chmod +777 PS4_mac.bin
           sudo chmod +777 PS4.exe
-      -
-        name: "Upload Binary Artifact"
+
+      - name: Upload Binary Artifact
         uses: actions/upload-artifact@v2
         with:
-          path: ./*.bin
-          path: ./*.exe
-          if-no-files-found: error
+          path: |
+            ./*.bin
+            ./*.exe
+        if-no-files-found: error
