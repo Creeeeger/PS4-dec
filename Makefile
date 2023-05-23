@@ -6,8 +6,8 @@ SDIR	:= source
 IDIRS	:= -I$(LIBPS4)/include -Iinclude
 LDIRS	:= -L$(LIBPS4)
 MAPFILE := $(shell basename $(CURDIR)).map
-CFLAGS	:= $(IDIRS) -Os -std=gnu11 -ffunction-sections -fdata-sections -fno-builtin -nostdlib -Wall -masm=intel -march=btver2 -mtune=btver2 -m64 -mabi=sysv -mcmodel=small -fpie
-LFLAGS	:= $(LDIRS) -Xlinker -T $(LIBPS4)/linker.x -Xlinker -Map=$(MAPFILE) -Wl,--build-id=none -Wl,--gc-sections
+CFLAGS	:= $(IDIRS) -std=gnu11 -ffunction-sections -fdata-sections -fno-builtin -nostdlib -Wall -masm=intel -m64 -mabi=sysv -fpie -v
+LFLAGS	:= $(LDIRS) -Xlinker -T $(LIBPS4)/linker.x -Xlinker -Map=$(MAPFILE)
 CFILES	:= $(wildcard $(SDIR)/*.c)
 SFILES	:= $(wildcard $(SDIR)/*.s)
 OBJS	:= $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES)) $(patsubst $(SDIR)/%.s, $(ODIR)/%.o, $(SFILES))
