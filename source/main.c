@@ -1,5 +1,5 @@
 #include "kernel_utils.h"
-#include "decrypt.c"
+//#include "decrypt.c"
 
 #define KERNEL_CHUNK_SIZE 0x1000
 #define KERNEL_CHUNK_NUMBER 0x69B8
