@@ -4,6 +4,8 @@
 #include "fw_defines.h"
 #include "ps4.h"
 
+void decrypt_pups(const char * InputPath, const char * OutputPath);
+
 
 struct kpayload_get_fw_version_info {
   uint64_t uaddr;
