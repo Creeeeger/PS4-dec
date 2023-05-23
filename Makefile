@@ -6,7 +6,7 @@ SDIR	:= source
 IDIRS	:= -I$(LIBPS4)/include -Iinclude
 LDIRS	:= -L$(LIBPS4)
 MAPFILE := $(shell basename $(CURDIR)).map
-CFLAGS	:= $(IDIRS) -ffunction-sections -fdata-sections -fno-builtin -nostdlib -Wall -masm=intel -m64 -fpie
+CFLAGS	:= $(IDIRS) -ffunction-sections -fdata-sections -fno-builtin -nostdlib -Wall -masm=intel -m64 -mabi=sysv -fpie
 LFLAGS	:= $(LDIRS) -Xlinker -T $(LIBPS4)/linker.x -Xlinker -Map=$(MAPFILE)
 CFILES	:= $(wildcard $(SDIR)/*.c)
 SFILES	:= $(wildcard $(SDIR)/*.s)
@@ -18,7 +18,7 @@ TARGET = $(shell basename $(CURDIR)).bin
 
 $(TARGET): $(ODIR) $(OBJS)
 	$(CC) $(LIBPS4)/crt0.s $(ODIR)/*.o -o temp.t $(CFLAGS) $(LFLAGS) $(LIBS)
-	$(OBJCOPY) -O macho64 temp.t $(TARGET)
+	$(OBJCOPY) -O elf64-x86-64 temp.t $(TARGET)
 	rm -f temp.t
 
 $(ODIR)/%.o: $(SDIR)/%.c
@@ -34,4 +34,3 @@ $(ODIR):
 
 clean:
 	rm -rf $(TARGET) $(MAPFILE) $(ODIR)
-
