@@ -26,3 +26,11 @@ $(ODIR)/%.o: $(SDIR)/%.c
 
 $(ODIR)/%.o: $(SDIR)/%.s
 	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(ODIR):
+	@mkdir $@
+
+.PHONY: clean
+
+clean:
+	rm -rf $(TARGET) $(MAPFILE) $(ODIR)
