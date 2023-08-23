@@ -14,7 +14,7 @@ OBJS	:= $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES)) $(patsubst $(SDIR)/%.s, 
 
 LIBS	:= -lPS4
 
-TARGET = $(shell basename $(CURDIR)).bin
+TARGET = ps4_pup_decrypt.elf
 
 $(TARGET): $(ODIR) $(OBJS)
 	$(CC) $(LIBPS4)/crt0.s $(ODIR)/*.o -o temp.t $(CFLAGS) $(LFLAGS) $(LIBS)
@@ -31,9 +31,6 @@ $(ODIR):
 	@mkdir $@
 
 .PHONY: clean
-
-debug: $(TARGET)
-	gdb ./$(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(MAPFILE) $(ODIR)

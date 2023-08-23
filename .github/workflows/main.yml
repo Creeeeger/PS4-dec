@@ -32,11 +32,10 @@ jobs:
       - name: Build Unpacker
         run: |
           export PS4SDK=$(pwd)/ps4sdk
-          make debug
+          make
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v2
         with:
           path: |
-            ./*.bin
-            ./*.exe
+            ./*.elf
