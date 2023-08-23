@@ -7,7 +7,7 @@ IDIRS	:= -I$(LIBPS4)/include -Iinclude
 LDIRS	:= -L$(LIBPS4)
 MAPFILE := $(shell basename $(CURDIR)).map
 CFLAGS	:= $(IDIRS) -ffunction-sections -fdata-sections -fno-builtin -nostdlib -Wall -masm=intel -m64 -mabi=sysv -fpie
-LFLAGS	:= $(LDIRS) -Xlinker -T $(LIBPS4)/linker.x -Xlinker -Map=$(MAPFILE)
+LFLAGS	:= $(LDIRS) -Xlinker -T $(LIBPS4)/linker.x -Xlinker -Map=$(MAPFILE), -g
 CFILES	:= $(wildcard $(SDIR)/*.c)
 SFILES	:= $(wildcard $(SDIR)/*.s)
 OBJS	:= $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES)) $(patsubst $(SDIR)/%.s, $(ODIR)/%.o, $(SFILES))
@@ -31,6 +31,9 @@ $(ODIR):
 	@mkdir $@
 
 .PHONY: clean
+
+debug: $(TARGET)
+	gdb ./$(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(MAPFILE) $(ODIR)
