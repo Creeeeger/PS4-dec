@@ -17,6 +17,8 @@ uint8_t GetElapsed(uint64_t ResetInterval) {
  return 0;
 }
 
+void decrypt_pups(const char* inputPath, const char* outputPath);
+
 int _main(struct thread* td) {
   initKernel();
   initLibc();
@@ -25,7 +27,6 @@ int _main(struct thread* td) {
 
 #ifdef DEBUG_SOCKET
   struct sockaddr_in server;
-
   server.sin_len = sizeof(server);
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = DEBUG_ADDR;                //in defines.h
@@ -42,7 +43,7 @@ int _main(struct thread* td) {
   initSysUtil();
   GetElapsed(0);
   printf_notification("Running PS4 PUP Decrypter");
- // decrypt_pups("/mnt/usb0/safe.PS4UPDATE.PUP", "/mnt/usb0/%s.dec");
+  decrypt_pups("/mnt/usb0/safe.PS4UPDATE.PUP", "/mnt/usb0/%s.dec");
   printf_notification("Finished PS4 PUP Decrypter");
   return 0;
 }
