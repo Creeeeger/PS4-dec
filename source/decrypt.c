@@ -211,7 +211,6 @@ int decrypt_segment_blocks(const decrypt_state * state, uint16_t index, pup_segm
     if ((block_count > 50) && (i % 5 == 0) && (GetElapsed(15) == 1)) {
        uint32_t percentage = (uint32_t)(((float)i / (float)block_count) * 100.0f);
        sprintf(state->notifystr, "Approximately %d percent complete processing entry %s (%d/%d) from %s", percentage, state->entryname, state->entryid, state->totalentries, state->input_path);
-       printf_notification(state->notifystr);
     }
 
     size_t read_size;
@@ -582,7 +581,6 @@ void decrypt_pups(const char * InputPath, const char * OutputPath)
     state.output_base_offset = 0;
 
     sprintf(state.notifystr, "Decrypting \"%s\" (%d/%d) from %s...", state.entryname, state.entryid, state.totalentries, state.input_path);
-    printf_notification(state.notifystr);
 
     decrypt_pup(&state, OutputPath);
 
