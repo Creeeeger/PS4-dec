@@ -3,7 +3,7 @@ The PS4 PUP Update File Decryptor is a tool designed to decrypt PS4 PUP (PlaySta
 
 # Roadmap
 The roadmap for the PS4 PUP Update File Decryptor includes the following task:
--no its done (before u do the same mistake as me run it on the ps4 not pc)
+- no its done (before u do the same mistake as me run it on the ps4 not pc)
 
 # GitHub Workflow
 To contribute to the development of the PS4 PUP Update File Decryptor, follow these steps:
