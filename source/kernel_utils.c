@@ -2,6 +2,31 @@
 
 #define X86_CR0_WP (1 << 16)
 
+static inline __attribute__((always_inline)) uint64_t __readmsr(unsigned long __register) {
+  unsigned long __edx;
+  unsigned long __eax;
+  __asm__("rdmsr"
+          : "=d"(__edx), "=a"(__eax)
+          : "c"(__register));
+  return (((uint64_t)__edx) << 32) | (uint64_t)__eax;
+}
+
+static inline __attribute__((always_inline)) uint64_t readCr0(void) {
+  uint64_t cr0;
+  __asm__ volatile("movq %0, %%cr0"
+                   : "=r"(cr0)
+                   :
+                   : "memory");
+  return cr0;
+}
+
+static inline __attribute__((always_inline)) void writeCr0(uint64_t cr0) {
+  __asm__ volatile("movq %%cr0, %0"
+                   :
+                   : "r"(cr0)
+                   : "memory");
+}
+
 int kpayload_get_fw_version(struct thread *td, struct kpayload_get_fw_version_args *args) {
   void *kernel_base = 0;
   int (*copyout)(const void *kaddr, void *uaddr, size_t len) = 0;
@@ -290,7 +315,7 @@ int kpayload_get_kbase(struct thread *td, struct kpayload_get_kbase_args *args) 
   } else if (fw_version == 0x370) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K370_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K370_COPYOUT);
-  } else if (fw_version == 0x400) {
+  } else if (fw_version == 0x400 || 0x401) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K400_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K400_COPYOUT);
   } else if (fw_version == 0x405) {
@@ -369,7 +394,7 @@ int kpayload_kernel_dumper(struct thread *td, struct kpayload_kernel_dumper_args
   } else if (fw_version == 0x370) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K370_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K370_COPYOUT);
-  } else if (fw_version == 0x400) {
+  } else if (fw_version == 0x400 || 0x401) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K400_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K400_COPYOUT);
   } else if (fw_version == 0x405) {

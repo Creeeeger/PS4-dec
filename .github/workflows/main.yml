@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,10 +31,7 @@ jobs:
 
       - name: Build Unpacker
         run: |
-          export PS4SDK=$(pwd)/ps4sdk
           make
-          sudo chmod 777 ps4_pup_decrypt.elf
-          ./ps4_pup_decrypt.elf
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v2
