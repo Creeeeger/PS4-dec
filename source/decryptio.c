@@ -33,7 +33,7 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
           return -1;
       }
 
-      printfsocket("Seeked to position " SSIZET_FMT " in input file.\n", result);
+      printfsocket("Seeked to position %s in input file.\n", result);
   }
 
   size_t rchunksize = (bytes >= chunksize) ? chunksize : bytes;
@@ -54,7 +54,7 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
 
   if ((result == -1) || (bytesread != bytes)) {
       int errcode = errno;
-      printfsocket("Read failed; Read " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", bytesread, bytes,
+      printfsocket("Read failed; Read %s of %s bytes - Result: %d (%s)\n", bytesread, bytes,
 												  errcode,
 												  strerror(errcode));
       return -1;
@@ -96,7 +96,7 @@ ssize_t writebytes(const decrypt_state * state, size_t offset, size_t bytes, voi
           return -1;
       }
 
-      printfsocket("Seeked to position " SSIZET_FMT " in output file.\n", result);
+      printfsocket("Seeked to position %s in output file.\n", result);
   }
 
   size_t wchunksize = (bytes >= chunksize) ? chunksize : bytes;
@@ -117,7 +117,7 @@ ssize_t writebytes(const decrypt_state * state, size_t offset, size_t bytes, voi
 
   if ((result == -1) || (byteswritten != bytes)) {
       int errcode = errno;
-      printfsocket("Write failed; Write " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", byteswritten,
+      printfsocket("Write failed; Write %s of %s bytes - Result: %d (%s)\n", byteswritten,
 												    bytes, errcode,
 												    strerror(errcode));
       return -1;
