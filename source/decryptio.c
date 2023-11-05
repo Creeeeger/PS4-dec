@@ -4,6 +4,15 @@
 
 #define chunksize 2097152
 
+#ifdef DEBUG_SOCKET
+  #define printfsocket(format, ...)\
+    do {\
+      char __printfsocket_buffer[512];\
+      int __printfsocket_size = sprintf(__printfsocket_buffer, format, ##__VA_ARGS__);\
+      sceNetSend(sock, __printfsocket_buffer, __printfsocket_size, 0);\
+    } while(0)
+#endif
+
 ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void * buffer, size_t buffersize) {
 
   if (bytes > buffersize) {
