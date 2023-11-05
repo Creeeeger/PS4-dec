@@ -7,6 +7,15 @@
 #include "debug.h"
 #include "kernel_utils.h"
 
+#ifdef DEBUG_SOCKET
+  #define printfsocket(format, ...)\
+    do {\
+      char __printfsocket_buffer[512];\
+      int __printfsocket_size = sprintf(__printfsocket_buffer, format, ##__VA_ARGS__);\
+      sceNetSend(sock, __printfsocket_buffer, __printfsocket_size, 0);\
+    } while(0)
+#endif
+
 int verify_segment(const decrypt_state* state, int index, pup_segment* segment, int additional)
 {
   int result;
