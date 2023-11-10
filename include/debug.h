@@ -1,4 +1,4 @@
-/*#ifndef __DEBUG_H__
+#ifndef __DEBUG_H__
 #define __DEBUG_H__
 
 #ifdef DEBUG_SOCKET
@@ -18,4 +18,4 @@ extern time_t prevtime;
 
 #define SSIZET_FMT "%zd"
 
-#endif*/
+#endif
