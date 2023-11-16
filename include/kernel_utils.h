@@ -4,8 +4,12 @@
 #include "fw_defines.h"
 #include "ps4.h"
 
-void decrypt_pups(const char * InputPath, const char * OutputPath);
-
+#define printf_notification(...)                       \
+  do {                                                 \
+    char message[256];                                 \
+    snprintf(message, sizeof(message), ##__VA_ARGS__); \
+    systemMessage(message);                            \
+  } while (0)
 
 struct kpayload_get_fw_version_info {
   uint64_t uaddr;
@@ -48,6 +52,8 @@ struct kpayload_kernel_dumper_args {
 };
 
 uint64_t get_fw_version(void);
+int jailbreak(uint64_t fw_version);
+uint64_t get_kernel_base(uint64_t fw_version);
 int dump_kernel(uint64_t fw_version, uint64_t kaddr, uint64_t *dump, size_t size);
 
 #endif
