@@ -16,3 +16,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Build Lib
+        run: |
+          sudo chmod +rwx install.sh
+          sudo bash install.sh
+
+      - name: Build Unpacker
+        run: |
+          make
