@@ -21,3 +21,8 @@ jobs:
         run: |
           sudo chmod +rwx install.sh
           sudo bash install.sh
+
+      - name: Build Unpacker
+        run: |
+          export PS4SDK=$(pwd)/ps4sdk
+          make
