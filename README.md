@@ -15,3 +15,4 @@ To contribute to the development of the PS4 PUP Update File Decryptor, follow th
 
 env:
 Just use the workflow
+This is the proper workflow it should use in the main branch you find a modified version for ubuntu-latest.
