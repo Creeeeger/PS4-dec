@@ -61,6 +61,11 @@
 #define K960_XFAST_SYSCALL         0x000001C0
 #define K1000_XFAST_SYSCALL        0x000001C0
 #define K1001_XFAST_SYSCALL        0x000001C0
+#define K1050_XFAST_SYSCALL        0x000001C0
+#define K1070_XFAST_SYSCALL        0x000001C0
+#define K1071_XFAST_SYSCALL        0x000001C0
+#define K1100_XFAST_SYSCALL        0x000001C0
+#define K1102_XFAST_SYSCALL        0x000001C0
 
 // Used in every payload that uses jailbreak();
 #define K300_PRISON_0              0x0
@@ -118,6 +123,11 @@
 #define K960_PRISON_0              0x011137D0
 #define K1000_PRISON_0             0x0111B8B0
 #define K1001_PRISON_0             0x0111B8B0
+#define K1050_PRISON_0             0x0111B910
+#define K1070_PRISON_0             0x0111B910
+#define K1071_PRISON_0             0x0111B910
+#define K1100_PRISON_0             0x0111F830
+#define K1102_PRISON_0             0x0111F830
 
 // Used in every payload that uses jailbreak();
 #define K300_ROOTVNODE             0x0
@@ -175,6 +185,11 @@
 #define K960_ROOTVNODE             0x021A6C30
 #define K1000_ROOTVNODE            0x01B25BD0
 #define K1001_ROOTVNODE            0x01B25BD0
+#define K1050_ROOTVNODE            0x01BF81F0
+#define K1070_ROOTVNODE            0x01BF81F0
+#define K1071_ROOTVNODE            0x01BF81F0
+#define K1100_ROOTVNODE            0x02116640
+#define K1102_ROOTVNODE            0x02116640
 
 // Used in Kernel Dumper
 #define K300_COPYOUT               0x0
@@ -232,6 +247,11 @@
 #define K960_COPYOUT               0x00201DC0
 #define K1000_COPYOUT              0x00472E20
 #define K1001_COPYOUT              0x00472E20
+#define K1050_COPYOUT              0x000D7470
+#define K1070_COPYOUT              0x000D7470
+#define K1071_COPYOUT              0x000D7470
+#define K1100_COPYOUT              0x002DDEF0
+#define K1102_COPYOUT              0x002DDF10
 
 // Used in Dumper, FTP, and Module Dumper
 #define K300_MMAP_SELF_1           0x0
@@ -289,6 +309,11 @@
 #define K960_MMAP_SELF_1           0x00032600
 #define K1000_MMAP_SELF_1          0x000A5CD0
 #define K1001_MMAP_SELF_1          0x000A5CD0
+#define K1050_MMAP_SELF_1          0x001F44E0
+#define K1070_MMAP_SELF_1          0x001F44E0
+#define K1071_MMAP_SELF_1          0x001F44E0
+#define K1100_MMAP_SELF_1          0x003D0E50
+#define K1102_MMAP_SELF_1          0x003D0E70
 
 // Used in Dumper, FTP, and Module Dumper
 #define K300_MMAP_SELF_2           0x0
@@ -346,6 +371,11 @@
 #define K960_MMAP_SELF_2           0x00032620
 #define K1000_MMAP_SELF_2          0x000A5CF0
 #define K1001_MMAP_SELF_2          0x000A5CF0
+#define K1050_MMAP_SELF_2          0x001F4500
+#define K1070_MMAP_SELF_2          0x001F4500
+#define K1071_MMAP_SELF_2          0x001F4500
+#define K1100_MMAP_SELF_2          0x00232900
+#define K1102_MMAP_SELF_2          0x00232920
 
 // Used in Module Dumper, App Dumper, and FTP
 #define K300_MMAP_SELF_3           0x0
@@ -403,6 +433,11 @@
 #define K960_MMAP_SELF_3           0x00124AA1
 #define K1000_MMAP_SELF_3          0x000EF2C1
 #define K1001_MMAP_SELF_3          0x000EF2C1
+#define K1050_MMAP_SELF_3          0x0019E151
+#define K1070_MMAP_SELF_3          0x0019E151
+#define K1071_MMAP_SELF_3          0x0019E151
+#define K1100_MMAP_SELF_3          0x00157F91
+#define K1102_MMAP_SELF_3          0x00157FB1
 
 // Used in Disable ASLR
 // May also require changes to the `kpayload_aslr` function in `payload_utils.c`
@@ -461,6 +496,11 @@
 #define K960_DISABLE_ASLR          0x0029AE74
 #define K1000_DISABLE_ASLR         0x003BF3A4
 #define K1001_DISABLE_ASLR         0x003BF3A4
+#define K1050_DISABLE_ASLR         0x00345E04
+#define K1070_DISABLE_ASLR         0x00345E04
+#define K1071_DISABLE_ASLR         0x00345E04
+#define K1100_DISABLE_ASLR         0x003B11A4
+#define K1102_DISABLE_ASLR         0x003B11C4
 
 // Used in Enable Browser
 #define K300_REG_MGR_SET_INT       0x0
@@ -518,6 +558,11 @@
 #define K960_REG_MGR_SET_INT       0x004E8D70
 #define K1000_REG_MGR_SET_INT      0x004EC5D0
 #define K1001_REG_MGR_SET_INT      0x004EC5D0
+#define K1050_REG_MGR_SET_INT      0x004E6A70
+#define K1070_REG_MGR_SET_INT      0x004E6A70
+#define K1071_REG_MGR_SET_INT      0x004E6A70
+#define K1100_REG_MGR_SET_INT      0x004EDFF0
+#define K1102_REG_MGR_SET_INT      0x004EDF80
 
 // Used in Kernel Clock
 #define K300_SET_TIME              0x0
@@ -575,6 +620,11 @@
 #define K960_SET_TIME              0x0062B1B0 // Needs Verified
 #define K1000_SET_TIME             0x00630530 // Needs Verified
 #define K1001_SET_TIME             0x00630530 // Needs Verified
+#define K1050_SET_TIME             0x00633CF0 // Needs Verified
+#define K1070_SET_TIME             0x00633CF0 // Needs Verified
+#define K1071_SET_TIME             0x00633CF0 // Needs Verified
+#define K1100_SET_TIME             0x006332E0 // Needs Verified
+#define K1102_SET_TIME             0x00633280 // Needs Verified
 
 // Used in Kernel Clock
 #define K300_CLEAR_TIME_DIFFERENCE  0x00000000 // Needs Verified
@@ -632,6 +682,11 @@
 #define K960_CLEAR_TIME_DIFFERENCE  0x0062A690
 #define K1000_CLEAR_TIME_DIFFERENCE 0x0062FA10
 #define K1001_CLEAR_TIME_DIFFERENCE 0x0062FA10
+#define K1050_CLEAR_TIME_DIFFERENCE 0x006331D0
+#define K1070_CLEAR_TIME_DIFFERENCE 0x006331D0
+#define K1071_CLEAR_TIME_DIFFERENCE 0x006331D0
+#define K1100_CLEAR_TIME_DIFFERENCE 0x006327C0
+#define K1102_CLEAR_TIME_DIFFERENCE 0x00632760
 
 // Used in ToDex
 #define K300_TARGET_ID             0x0
@@ -689,6 +744,11 @@
 #define K960_TARGET_ID             0x0221A40D
 #define K1000_TARGET_ID            0x01B9E08D
 #define K1001_TARGET_ID            0x01B9E08D
+#define K1050_TARGET_ID            0x01BE460D
+#define K1070_TARGET_ID            0x01BE460D
+#define K1071_TARGET_ID            0x01BE460D
+#define K1100_TARGET_ID            0x0221C60D
+#define K1102_TARGET_ID            0x0221C60D
 
 // Used in Perm UART
 #define K300_ICC_NVS_WRITE         0x0
@@ -746,6 +806,11 @@
 #define K960_ICC_NVS_WRITE         0x000405F0
 #define K1000_ICC_NVS_WRITE        0x002E0690
 #define K1001_ICC_NVS_WRITE        0x002E0690
+#define K1050_ICC_NVS_WRITE        0x0011A770
+#define K1070_ICC_NVS_WRITE        0x0011A770
+#define K1071_ICC_NVS_WRITE        0x0011A770
+#define K1100_ICC_NVS_WRITE        0x002D4130
+#define K1102_ICC_NVS_WRITE        0x002D4150
 
 #define K300_NPDRM_OPEN            0x0
 #define K310_NPDRM_OPEN            0x0
@@ -802,6 +867,11 @@
 #define K960_NPDRM_OPEN            0x00646EC0
 #define K1000_NPDRM_OPEN           0x0064BE00
 #define K1001_NPDRM_OPEN           0x0064BE00
+#define K1050_NPDRM_OPEN           0x0064C970
+#define K1070_NPDRM_OPEN           0x0064C970
+#define K1071_NPDRM_OPEN           0x0064C970
+#define K1100_NPDRM_OPEN           0x0064E320
+#define K1102_NPDRM_OPEN           0x0064E2C0
 
 #define K300_NPDRM_CLOSE           0x0
 #define K310_NPDRM_CLOSE           0x0
@@ -858,6 +928,11 @@
 #define K960_NPDRM_CLOSE           0x00646EE0
 #define K1000_NPDRM_CLOSE          0x0064BE20
 #define K1001_NPDRM_CLOSE          0x0064BE20
+#define K1050_NPDRM_CLOSE          0x0064C990
+#define K1070_NPDRM_CLOSE          0x0064C990
+#define K1071_NPDRM_CLOSE          0x0064C990
+#define K1100_NPDRM_CLOSE          0x0064E340
+#define K1102_NPDRM_CLOSE          0x0064E2E0
 
 #define K300_NPDRM_IOCTL           0x0
 #define K310_NPDRM_IOCTL           0x0
@@ -914,6 +989,11 @@
 #define K960_NPDRM_IOCTL           0x00646F37
 #define K1000_NPDRM_IOCTL          0x0064BE77
 #define K1001_NPDRM_IOCTL          0x0064BE77
+#define K1050_NPDRM_IOCTL          0x0064C9E7
+#define K1070_NPDRM_IOCTL          0x0064C9E7
+#define K1071_NPDRM_IOCTL          0x0064C9E7
+#define K1100_NPDRM_IOCTL          0x0064E397
+#define K1102_NPDRM_IOCTL          0x0064E337
 
 // clang-format on
 
