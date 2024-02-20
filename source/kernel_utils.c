@@ -8,11 +8,41 @@ int kpayload_get_fw_version(struct thread *td, struct kpayload_get_fw_version_ar
 
   uint64_t fw_version = 0x666;
 
-  if (!memcmp((char *)(&((uint8_t *)__readmsr(0xC0000082))[-K700_XFAST_SYSCALL]), (char[4]){0x7F, 0x45, 0x4C, 0x46}, 4)) {
-    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K700_XFAST_SYSCALL];
-    if (!memcmp((char *)(kernel_base + K700_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
-      fw_version = 0x700; // 7.00, 7.01, 7.02
-      copyout = (void *)(kernel_base + K700_COPYOUT);
+if (!memcmp((char *)(&((uint8_t *)__readmsr(0xC0000082))[-K1100_XFAST_SYSCALL]), (char[4]){0x7F, 0x45, 0x4C, 0x46}, 4)) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K1100_XFAST_SYSCALL];
+    if (!memcmp((char *)(kernel_base + K1100_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x1100; // 11.00
+        copyout = (void *)(kernel_base + K1100_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K1070_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x1070; // 10.70
+        copyout = (void *)(kernel_base + K1070_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K1050_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x1050; // 10.50
+        copyout = (void *)(kernel_base + K1050_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K1000_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x1000; // 10.00
+        copyout = (void *)(kernel_base + K1000_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K960_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x960; // 9.60
+        copyout = (void *)(kernel_base + K960_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K950_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x950; // 9.50
+        copyout = (void *)(kernel_base + K950_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K900_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x900; // 9.00
+        copyout = (void *)(kernel_base + K900_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K850_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x850; // 8.50
+        copyout = (void *)(kernel_base + K850_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K800_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x800; // 8.00
+        copyout = (void *)(kernel_base + K800_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K750_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x750; // 7.50
+        copyout = (void *)(kernel_base + K750_COPYOUT);
+    } else if (!memcmp((char *)(kernel_base + K700_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
+        fw_version = 0x700; // 7.00, 7.01, 7.02
+        copyout = (void *)(kernel_base + K700_COPYOUT);
     } else if (!memcmp((char *)(kernel_base + K670_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
       fw_version = 0x670; // 6.70, 6.71, and 6.72
       copyout = (void *)(kernel_base + K670_COPYOUT);
