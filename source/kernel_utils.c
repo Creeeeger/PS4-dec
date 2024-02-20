@@ -344,6 +344,36 @@ int kpayload_get_kbase(struct thread *td, struct kpayload_get_kbase_args *args) 
   } else if (fw_version == 0x700 || fw_version == 0x701 || fw_version == 0x702) {
     kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K700_XFAST_SYSCALL];
     copyout = (void *)(kernel_base + K700_COPYOUT);
+  } else if (fw_version == 0x750 || fw_version == 0x751 || fw_version == 0x755) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K750_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K750_COPYOUT);
+  } else if (fw_version == 0x800 || fw_version == 0x801 || fw_version == 0x803) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K800_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K800_COPYOUT);
+  } else if (fw_version == 0x850 || fw_version == 0x852) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K850_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K850_COPYOUT);
+  } else if (fw_version == 0x900 || fw_version == 0x903 || fw_version == 0x904) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K900_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K900_COPYOUT);
+  } else if (fw_version == 0x950 || fw_version == 0x951) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K950_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K950_COPYOUT);
+  } else if (fw_version == 0x960) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K960_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K960_COPYOUT);
+  } else if (fw_version == 0x1000 || fw_version == 0x1001) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K1000_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K1000_COPYOUT);
+  } else if (fw_version == 0x1050) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K1050_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K1050_COPYOUT);
+  } else if (fw_version == 0x1070 || fw_version == 0x1071) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K1070_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K1070_COPYOUT);
+  } else if (fw_version == 0x1100 || fw_version == 0x1102) {
+    kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K1100_XFAST_SYSCALL];
+    copyout = (void *)(kernel_base + K1100_COPYOUT);
   } else {
     return -1;
   }
