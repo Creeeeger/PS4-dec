@@ -31,15 +31,6 @@ if (!memcmp((char *)(&((uint8_t *)__readmsr(0xC0000082))[-K1100_XFAST_SYSCALL]),
     } else if (!memcmp((char *)(kernel_base + K900_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
         fw_version = 0x900; // 9.00
         copyout = (void *)(kernel_base + K900_COPYOUT);
-    } else if (!memcmp((char *)(kernel_base + K850_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
-        fw_version = 0x850; // 8.50
-        copyout = (void *)(kernel_base + K850_COPYOUT);
-    } else if (!memcmp((char *)(kernel_base + K800_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
-        fw_version = 0x800; // 8.00
-        copyout = (void *)(kernel_base + K800_COPYOUT);
-    } else if (!memcmp((char *)(kernel_base + K750_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
-        fw_version = 0x750; // 7.50
-        copyout = (void *)(kernel_base + K750_COPYOUT);
     } else if (!memcmp((char *)(kernel_base + K700_PRINTF), (char[12]){0x55, 0x48, 0x89, 0xE5, 0x53, 0x48, 0x83, 0xEC, 0x58, 0x48, 0x8D, 0x1D}, 12)) {
         fw_version = 0x700; // 7.00, 7.01, 7.02
         copyout = (void *)(kernel_base + K700_COPYOUT);
