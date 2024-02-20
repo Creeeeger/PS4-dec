@@ -38,7 +38,31 @@
 #define K671_XFAST_SYSCALL         0x000001C0
 #define K672_XFAST_SYSCALL         0x000001C0
 #define K700_XFAST_SYSCALL         0x000001C0
+#define K701_XFAST_SYSCALL         0x000001C0
+#define K702_XFAST_SYSCALL         0x000001C0
+#define K750_XFAST_SYSCALL         0x000001C0
+#define K751_XFAST_SYSCALL         0x000001C0
+#define K755_XFAST_SYSCALL         0x000001C0
+#define K800_XFAST_SYSCALL         0x000001C0
+#define K801_XFAST_SYSCALL         0x000001C0
+#define K803_XFAST_SYSCALL         0x000001C0
+#define K850_XFAST_SYSCALL         0x000001C0
+#define K852_XFAST_SYSCALL         0x000001C0
+#define K900_XFAST_SYSCALL         0x000001C0
+#define K903_XFAST_SYSCALL         0x000001C0
+#define K904_XFAST_SYSCALL         0x000001C0
+#define K950_XFAST_SYSCALL         0x000001C0
+#define K951_XFAST_SYSCALL         0x000001C0
+#define K960_XFAST_SYSCALL         0x000001C0
+#define K1000_XFAST_SYSCALL        0x000001C0
+#define K1001_XFAST_SYSCALL        0x000001C0
+#define K1050_XFAST_SYSCALL        0x000001C0
+#define K1070_XFAST_SYSCALL        0x000001C0
+#define K1071_XFAST_SYSCALL        0x000001C0
+#define K1100_XFAST_SYSCALL        0x000001C0
+#define K1102_XFAST_SYSCALL        0x000001C0
 
+// Used in every payload that uses jailbreak();
 #define K300_PRISON_0              0x0
 #define K310_PRISON_0              0x0
 #define K311_PRISON_0              0x0
@@ -76,7 +100,31 @@
 #define K671_PRISON_0              0x0113E518
 #define K672_PRISON_0              0x0113E518
 #define K700_PRISON_0              0x0113E398
+#define K701_PRISON_0              0x0113E398
+#define K702_PRISON_0              0x0113E398
+#define K750_PRISON_0              0x0113B728
+#define K751_PRISON_0              0x0113B728
+#define K755_PRISON_0              0x0113B728
+#define K800_PRISON_0              0x0111A7D0
+#define K801_PRISON_0              0x0111A7D0
+#define K803_PRISON_0              0x0111A7D0
+#define K850_PRISON_0              0x0111A8F0
+#define K852_PRISON_0              0x0111A8F0
+#define K900_PRISON_0              0x0111F870
+#define K903_PRISON_0              0x0111B840
+#define K904_PRISON_0              0x0111B840
+#define K950_PRISON_0              0x011137D0
+#define K951_PRISON_0              0x011137D0
+#define K960_PRISON_0              0x011137D0
+#define K1000_PRISON_0             0x0111B8B0
+#define K1001_PRISON_0             0x0111B8B0
+#define K1050_PRISON_0             0x0111B910
+#define K1070_PRISON_0             0x0111B910
+#define K1071_PRISON_0             0x0111B910
+#define K1100_PRISON_0             0x0111F830
+#define K1102_PRISON_0             0x0111F830
 
+// Used in every payload that uses jailbreak();
 #define K300_ROOTVNODE             0x0
 #define K310_ROOTVNODE             0x0
 #define K311_ROOTVNODE             0x0
@@ -114,6 +162,29 @@
 #define K671_ROOTVNODE             0x02300320
 #define K672_ROOTVNODE             0x02300320
 #define K700_ROOTVNODE             0x022C5750
+#define K701_ROOTVNODE             0x022C5750
+#define K702_ROOTVNODE             0x022C5750
+#define K750_ROOTVNODE             0x01B463E0
+#define K751_ROOTVNODE             0x01B463E0
+#define K755_ROOTVNODE             0x01B463E0
+#define K800_ROOTVNODE             0x01B8C730
+#define K801_ROOTVNODE             0x01B8C730
+#define K803_ROOTVNODE             0x01B8C730
+#define K850_ROOTVNODE             0x01C66150
+#define K852_ROOTVNODE             0x01C66150
+#define K900_ROOTVNODE             0x021EFF20
+#define K903_ROOTVNODE             0x021EBF20
+#define K904_ROOTVNODE             0x021EBF20
+#define K950_ROOTVNODE             0x021A6C30
+#define K951_ROOTVNODE             0x021A6C30
+#define K960_ROOTVNODE             0x021A6C30
+#define K1000_ROOTVNODE            0x01B25BD0
+#define K1001_ROOTVNODE            0x01B25BD0
+#define K1050_ROOTVNODE            0x01BF81F0
+#define K1070_ROOTVNODE            0x01BF81F0
+#define K1071_ROOTVNODE            0x01BF81F0
+#define K1100_ROOTVNODE            0x02116640
+#define K1102_ROOTVNODE            0x02116640
 
 #define K300_PRINTF                0x0
 #define K310_PRINTF                0x0
@@ -152,6 +223,13 @@
 #define K671_PRINTF                0x00123280
 #define K672_PRINTF                0x00123280
 #define K700_PRINTF                0x000BC730
+#define K701_PRINTF                0x000BC730
+#define K702_PRINTF                0x000BC730
+#define K755_PRINTF                0x00026F740
+#define K900_PRINTF                0x0000B7A30
+#define K903_PRINTF                0x0000B7A30
+#define K904_PRINTF                0x0000B7A30
+
 
 #define K300_COPYIN                0x0
 #define K310_COPYIN                0x0
@@ -190,6 +268,13 @@
 #define K671_COPYIN                0x003C17A0
 #define K672_COPYIN                0x003C17A0
 #define K700_COPYIN                0x0002F230
+#define K750_COPYIN                0x0028F9F0
+#define K751_COPYIN                0x0028F9F0
+#define K755_COPYIN                0x0028F9F0
+#define K900_COPYIN                0x002716A0
+#define K903_COPYIN                0x002716A0
+#define K904_COPYIN                0x002716A0
+
 
 #define K300_COPYOUT               0x0
 #define K310_COPYOUT               0x0
@@ -228,5 +313,28 @@
 #define K671_COPYOUT               0x003C16B0
 #define K672_COPYOUT               0x003C16B0
 #define K700_COPYOUT               0x0002F140
+#define K701_COPYOUT               0x0002F140
+#define K702_COPYOUT               0x0002F140
+#define K750_COPYOUT               0x0028F900
+#define K751_COPYOUT               0x0028F900
+#define K755_COPYOUT               0x0028F900
+#define K800_COPYOUT               0x0025E2C0
+#define K801_COPYOUT               0x0025E2C0
+#define K803_COPYOUT               0x0025E2C0
+#define K850_COPYOUT               0x003A41F0
+#define K852_COPYOUT               0x003A41F0
+#define K900_COPYOUT               0x002715B0
+#define K903_COPYOUT               0x00271230
+#define K904_COPYOUT               0x00271230
+#define K950_COPYOUT               0x00201DC0
+#define K951_COPYOUT               0x00201DC0
+#define K960_COPYOUT               0x00201DC0
+#define K1000_COPYOUT              0x00472E20
+#define K1001_COPYOUT              0x00472E20
+#define K1050_COPYOUT              0x000D7470
+#define K1070_COPYOUT              0x000D7470
+#define K1071_COPYOUT              0x000D7470
+#define K1100_COPYOUT              0x002DDEF0
+#define K1102_COPYOUT              0x002DDF10
 
 #endif
