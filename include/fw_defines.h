@@ -229,6 +229,16 @@
 #define K900_PRINTF                0x0000B7A30
 #define K903_PRINTF                0x0000B7A30
 #define K904_PRINTF                0x0000B7A30
+#define K950_PRINTF               0x0000B7A30
+#define K951_PRINTF               0x0000B7A30
+#define K960_PRINTF               0x0000B7A30
+#define K1000_PRINTF              0x0000B7A30
+#define K1001_PRINTF              0x0000B7A30
+#define K1050_PRINTF              0x0000B7A30
+#define K1070_PRINTF              0x0000B7A30
+#define K1071_PRINTF              0x0000B7A30
+#define K1100_PRINTF              0x0000B7A30
+#define K1102_PRINTF              0x0000B7A30
 
 
 #define K300_COPYIN                0x0
@@ -274,6 +284,16 @@
 #define K900_COPYIN                0x002716A0
 #define K903_COPYIN                0x002716A0
 #define K904_COPYIN                0x002716A0
+#define K950_COPYIN                0x002716A0
+#define K951_COPYIN                0x002716A0
+#define K960_COPYIN                0x002716A0
+#define K1000_COPYIN               0x002716A0
+#define K1001_COPYIN               0x002716A0
+#define K1050_COPYIN               0x002716A0
+#define K1070_COPYIN               0x002716A0
+#define K1071_COPYIN               0x002716A0
+#define K1100_COPYIN               0x002716A0
+#define K1102_COPYIN               0x002716A0
 
 
 #define K300_COPYOUT               0x0
