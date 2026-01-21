@@ -15,14 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Environment
-        run: |
-          git clone https://github.com/Creeeeger/PS4-dec.git
-          cd PS4-dec
-          make clean
-          chmod +rwx Makefile
+        uses: actions/checkout@v4
 
       - name: Build Lib
         run: |
@@ -33,8 +26,6 @@ jobs:
         run: |
           export PS4SDK=$(pwd)/ps4sdk
           make
-          sudo chmod 777 ps4_pup_decrypt.elf
-          ./ps4_pup_decrypt.elf
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v4
