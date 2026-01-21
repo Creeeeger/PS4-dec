@@ -15,14 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Environment
-        run: |
-          git clone https://github.com/Creeeeger/PS4-dec.git
-          cd PS4-dec
-          make clean
-          chmod +rwx Makefile
+        uses: actions/checkout@v4
 
       - name: Build Lib
         run: |
