@@ -21,3 +21,7 @@ To contribute to the development of the PS4 PUP Update File Decryptor, follow th
 # Etc
 - [x] update kernel_utils.c
 - [ ] test it on a PS4
+
+# Credits
+- For the original project: https://github.com/idc/ps4-pup_decrypt
+- To all other developers who have maintained the program until i started working with it
